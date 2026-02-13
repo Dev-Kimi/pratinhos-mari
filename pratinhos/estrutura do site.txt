@@ -1,0 +1,18 @@
+/pratinhos-da-mari
+│
+├── /assets
+│   ├── /css (estilos modernos)
+│   ├── /js (lógica de interação e carrinho)
+│   └── /img (fotos dos pratos)
+│
+├── /api
+│   ├── conexao.php (conecta no banco)
+│   └── buscar_cardapio.php (retorna os produtos em JSON)
+│
+├── /admin (Painel administrativo protegido)
+│   ├── index.php (login)
+│   ├── dashboard.php
+│   └── gerenciar_produtos.php
+│
+├── index.php (A loja - Frontend do cliente)
+└── checkout.php (Opcional, se não for fazer tudo na mesma tela)

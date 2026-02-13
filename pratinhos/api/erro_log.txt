@@ -1,0 +1,2 @@
+02/02/2026 09:11:45 - ERRO: Erro no Prepare Pedido: Unknown column 'cliente_whatsapp' in 'field list'
+02/02/2026 09:13:11 - ERRO: Erro no Prepare Pedido: Unknown column 'forma_pagamento' in 'field list'
