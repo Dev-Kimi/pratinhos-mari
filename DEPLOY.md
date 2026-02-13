@@ -1,27 +1,36 @@
 # Deploy deste projeto
 
-## Por que deu `404: NOT_FOUND` na Vercel
+## Erro na Vercel: `404: NOT_FOUND`
 
-Este repositório é um site **PHP** (arquivos `index.php`, `checkout.php`, `api/*.php`).
-A Vercel não executa PHP nativamente para esse tipo de projeto, então o deploy acaba em rota não encontrada (`NOT_FOUND`) ou sem renderizar a aplicação.
+Esse repositório é uma aplicação PHP (`.php`) e o código está na pasta `pratinhos/`.
+Na Vercel, esse formato não funciona de forma nativa para backend PHP tradicional, então é comum cair em `NOT_FOUND`.
 
-Além disso, os arquivos do site estão dentro da pasta `pratinhos/`, e não na raiz do repositório.
+## Erro na Railway: `Railpack could not determine how to build the app`
 
-## Opções recomendadas
+Esse erro aconteceu porque o Railpack analisou a raiz do repositório e só encontrou uma subpasta (`pratinhos/`) sem um entrypoint padrão na raiz.
 
-### 1) Hospedar em provedor com PHP nativo (mais simples)
-Use plataformas como:
-- Hostinger / cPanel
-- InfinityFree
-- Railway (com container)
-- Render (com container)
+### Correção aplicada neste repositório
 
-### 2) Se quiser continuar na Vercel
-Será necessário migrar o backend PHP para outro stack (ex.: Node/Serverless) e manter apenas frontend estático na Vercel.
+Foi adicionado um script `start.sh` na raiz para iniciar o PHP embutido apontando para a pasta correta:
 
-## Estrutura atual
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+PORT="${PORT:-8080}"
+cd pratinhos
+exec php -S 0.0.0.0:${PORT} -t .
+```
 
-- Frontend/Páginas: `pratinhos/*.php`
-- APIs: `pratinhos/api/*.php`
-- Admin: `pratinhos/admin/*.php`
+Com isso, a Railway consegue detectar e iniciar o app.
 
+## Como subir na Railway
+
+1. Conecte o repositório normalmente.
+2. Garanta que o deploy está usando a **raiz do repositório** (onde está o `start.sh`).
+3. Faça novo deploy.
+4. Abra a URL gerada.
+
+## Observações
+
+- Esse modo usa o servidor embutido do PHP (bom para deploy simples).
+- Se quiser ambiente mais robusto, depois podemos migrar para Docker + Nginx/Apache.
