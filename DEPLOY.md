@@ -5,32 +5,33 @@
 Esse repositório é uma aplicação PHP (`.php`) e o código está na pasta `pratinhos/`.
 Na Vercel, esse formato não funciona de forma nativa para backend PHP tradicional, então é comum cair em `NOT_FOUND`.
 
-## Erro na Railway: `Railpack could not determine how to build the app`
+## Erro na Railway: `start.sh: line 7: exec: php: not found`
 
-Esse erro aconteceu porque o Railpack analisou a raiz do repositório e só encontrou uma subpasta (`pratinhos/`) sem um entrypoint padrão na raiz.
+Esse erro indica que o container/ambiente iniciado pela Railway **não tinha binário `php` disponível** no runtime detectado.
 
-### Correção aplicada neste repositório
+## Correção aplicada (robusta)
 
-Foi adicionado um script `start.sh` na raiz para iniciar o PHP embutido apontando para a pasta correta:
+Foi adicionado um `Dockerfile` na raiz usando imagem oficial `php:8.2-cli`, garantindo que o PHP exista no runtime:
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-PORT="${PORT:-8080}"
-cd pratinhos
-exec php -S 0.0.0.0:${PORT} -t .
+```dockerfile
+FROM php:8.2-cli
+WORKDIR /app
+COPY . /app
+ENV PORT=8080
+EXPOSE 8080
+CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} -t /app/pratinhos"]
 ```
 
-Com isso, a Railway consegue detectar e iniciar o app.
+Também foi mantido o `start.sh` para uso local/alternativo, com mensagem clara caso `php` não exista no ambiente.
 
-## Como subir na Railway
+## Como subir na Railway (recomendado)
 
 1. Conecte o repositório normalmente.
-2. Garanta que o deploy está usando a **raiz do repositório** (onde está o `start.sh`).
+2. Garanta que o serviço está usando o **Dockerfile da raiz**.
 3. Faça novo deploy.
 4. Abra a URL gerada.
 
 ## Observações
 
-- Esse modo usa o servidor embutido do PHP (bom para deploy simples).
-- Se quiser ambiente mais robusto, depois podemos migrar para Docker + Nginx/Apache.
+- Com Dockerfile, você não depende da detecção automática do Railpack para achar PHP.
+- Se quiser, depois dá para evoluir para imagem com Nginx/Apache + PHP-FPM.
